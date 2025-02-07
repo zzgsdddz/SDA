@@ -58,7 +58,8 @@ curve(dnorm(x, mean = mean_theoretical, sd = sd_200), col = "red", lwd = 2, add 
 par(mfrow = c(1, 1))
 ```
 
-## c. we can observe that when we take more samples in each draw, the variance of the distribution of the sample means smaller.
+## c. 
+we can observe that when we take more samples in each draw, the variance of the distribution of the sample means is smaller. And overall, we can see the distribution of the sample means converges to the theoretical distribution as the sample size in each draw increases. This can be explained by central limit theorem.
 
 # Exercise 2
 
