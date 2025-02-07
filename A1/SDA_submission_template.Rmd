@@ -1,0 +1,34 @@
+---
+title: "SDA Group Submission Assignment Assign1"
+subtitle: "Group Gr18" 
+author: "MengliFeng (2720589) and NameSurname (StudNr)"
+output: 
+  pdf_document
+---
+
+# Exercise 1
+
+## a.
+```{r}
+CTL_unif <- function(n,m){
+  # Use replicate to generate n samples, each consisting of m draws from U(0, 1)
+  sample_means <- replicate(n, mean(runif(m)))
+  
+  # Return the vector of sample means
+  return(sample_means)
+}
+  
+```
+
+
+## b.
+
+## c.
+
+# Exercise 2
+
+## a.
+
+## b.
+
+## c.
