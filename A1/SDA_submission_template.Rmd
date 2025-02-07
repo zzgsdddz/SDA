@@ -22,8 +22,43 @@ CTL_unif <- function(n,m){
 
 
 ## b.
+```{r}
+# Set seed for reproducibility
+set.seed(42)
 
-## c.
+# Generate sample means for n = 500, m = 30
+means_30 <- CTL_unif(n = 500, m = 30)
+
+# Generate sample means for n = 500, m = 200
+means_200 <- CTL_unif(n = 500, m = 200)
+
+# Define the parameters for the normal distribution
+mean_theoretical <- 0.5
+sd_30 <- sqrt(1 / (12 * 30))  # Standard deviation for m = 30
+sd_200 <- sqrt(1 / (12 * 200))  # Standard deviation for m = 200
+
+# Get dynamic ylim values based on the density range
+ylim_30 <- c(0, max(density(means_30)$y, dnorm(mean_theoretical, mean = mean_theoretical, sd = sd_30)))
+ylim_200 <- c(0, max(density(means_200)$y, dnorm(mean_theoretical, mean = mean_theoretical, sd = sd_200)))
+
+# Plot the histograms side-by-side
+par(mfrow = c(1, 2))  # Set up a 1x2 plotting layout
+
+# Plot for m = 30
+hist(means_30, prob = TRUE, xlim = c(0.3, 0.7), ylim = ylim_30,
+     main = "Histogram for m = 30", xlab = "Sample Mean")
+curve(dnorm(x, mean = mean_theoretical, sd = sd_30), col = "blue", lwd = 2, add = TRUE)
+
+# Plot for m = 200
+hist(means_200, prob = TRUE, xlim = c(0.3, 0.7), ylim = ylim_200,
+     main = "Histogram for m = 200", xlab = "Sample Mean")
+curve(dnorm(x, mean = mean_theoretical, sd = sd_200), col = "red", lwd = 2, add = TRUE)
+
+# Reset the plotting layout
+par(mfrow = c(1, 1))
+```
+
+## c. we can observe that when we take more samples in each draw, the variance of the distribution of the sample means smaller.
 
 # Exercise 2
 
