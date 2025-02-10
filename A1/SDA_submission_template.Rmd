@@ -9,6 +9,7 @@ output:
 # Exercise 1
 
 ## a.
+
 ```{r}
 CTL_unif <- function(n,m){
   # Use replicate to generate n samples, each consisting of m draws from U(0, 1)
@@ -20,8 +21,8 @@ CTL_unif <- function(n,m){
   
 ```
 
-
 ## b.
+
 ```{r}
 # Set seed for reproducibility
 set.seed(42)
@@ -58,13 +59,79 @@ curve(dnorm(x, mean = mean_theoretical, sd = sd_200), col = "red", lwd = 2, add 
 par(mfrow = c(1, 1))
 ```
 
-## c. 
+## c.
+
 we can observe that when we take more samples in each draw, the variance of the distribution of the sample means is smaller. And overall, we can see the distribution of the sample means converges to the theoretical distribution as the sample size in each draw increases. This can be explained by central limit theorem.
 
 # Exercise 2
 
+```{r}
+data("airquality")
+head(airquality)
+```
+
 ## a.
+
+```{r}
+# It isn't a good idea to use 'airquality$Ozone == NA' since NA represents a missing value and comparing with NA always gives NA. Thus we use .is.na()
+NA_count <- sum(is.na(airquality$Ozone))
+
+# calculate the proportion of missing values
+NA_proportion <- NA_count / nrow(airquality)
+NA_proportion
+
+# na.rm = TRUE ensures a numerical output since it removes the missing values as it stands for na.remove
+mean_ozone <- mean(airquality$Ozone, na.rm = TRUE)
+mean_ozone
+```
 
 ## b.
 
+```{r}
+# remove all rows with a missing value
+airquality_clean <- na.omit(airquality)
+
+# remove the Day and Month columns
+airquality_clean <- subset(airquality_clean, select = -c(Month, Day))
+
+# make a summarry for every column
+summary(airquality_clean)
+
+# make the layout of boxplots a 2x2 grid
+par(mfrow = c(2, 2))
+
+# one by one plot all 4 of the boxplots
+boxplot(airquality_clean$Ozone, main = "Ozone")
+boxplot(airquality_clean$Solar.R, main = "Solar Radiation")
+boxplot(airquality_clean$Wind, main = "Wind")
+boxplot(airquality_clean$Temp, main = "Temperature")
+
+# reset layout
+par(mfrow = c(1, 1))
+```
+
 ## c.
+
+```{r}
+# correlation between Ozone and Temp
+cor(airquality_clean$Ozone, airquality_clean$Temp)
+
+# correlation between square root of Ozone and Temp
+cor(sqrt(airquality_clean$Ozone), airquality_clean$Temp)
+
+# The correlation changes between these two and it is higher for sqrt Ozone vs Temp, thus that has a better correlation
+
+# use a 1x2 grid so the plots are beside each other
+par(mfrow = c(1, 2))
+
+# plot Ozone vs Temp
+plot(airquality_clean$Ozone, airquality_clean$Temp, 
+     main = "Ozone vs Temp", xlab = "Ozone", ylab = "Temperature")
+
+# plot sqrt Ozone vs Temp
+plot(sqrt(airquality_clean$Ozone), airquality_clean$Temp, 
+     main = "sqrt Ozone vs Temp", xlab = "sqrt Ozone", ylab = "Temperature")
+
+# Both have a lot of variation but the second plot follows a line better so that one more closely resembles a linear relationship
+
+```
