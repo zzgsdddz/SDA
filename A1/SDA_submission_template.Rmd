@@ -1,7 +1,7 @@
 ---
 title: "SDA Group Submission Assignment Assign1"
 subtitle: "Group Gr18" 
-author: "MengliFeng (2720589) and NameSurname (StudNr)"
+author: "MengliFeng (2720589) and PepijnVanOostveen (2801582)"
 output: 
   pdf_document
 ---
