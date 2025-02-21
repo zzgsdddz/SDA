@@ -59,8 +59,68 @@ mtext("QQ-Plots (top) and Density Comparisons (bottom) of Distributions", outer 
 ```
 
 ## b.
+```{r}
+# Load necessary package
+library(EnvStats)
 
-## c.
+# Read the data
+mystery <- readRDS("mysterious_sample.RDS")
+
+# Compute sample statistics
+y_bar <- mean(mystery)  # Sample mean
+s_y <- sd(mystery)  # Sample standard deviation
+
+# Define theoretical distribution parameters
+# 1. Uniform(0,1)
+mu_x_unif <- (0 + 1) / 2  # Mean of Uniform(0,1)
+s_x_unif <- sqrt((1 - 0)^2 / 12)  # Standard deviation of Uniform(0,1)
+b_hat_unif <- s_y / s_x_unif
+a_hat_unif <- y_bar - b_hat_unif * mu_x_unif
+
+# 2. Extreme Value Distribution (EVD(0,1))
+mu_x_evd <- 0.5772  # Mean of EVD(0,1)
+s_x_evd <- sqrt(pi^2 / 6)  # Standard deviation of EVD(0,1)
+b_hat_evd <- s_y / s_x_evd
+a_hat_evd <- y_bar - b_hat_evd * mu_x_evd
+
+# 3. Logistic(0,1)
+mu_x_logis <- 0  # Mean of Logistic(0,1)
+s_x_logis <- sqrt(pi^2 / 3)  # Standard deviation of Logistic(0,1)
+b_hat_logis <- s_y / s_x_logis
+a_hat_logis <- y_bar - b_hat_logis * mu_x_logis
+
+# Print estimated slopes and intercepts
+cat("Estimated for Uniform(0,1): a =", a_hat_unif, ", b =", b_hat_unif, "\n")
+cat("Estimated for Extreme Value(0,1): a =", a_hat_evd, ", b =", b_hat_evd, "\n")
+cat("Estimated for Logistic(0,1): a =", a_hat_logis, ", b =", b_hat_logis, "\n")
+
+# Set up a 1x3 grid for plotting
+par(mfrow = c(1, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
+
+# Generate QQ-Plots with Fitted Lines
+
+# 1. QQ-Plot: Sample vs Uniform(0,1)
+qqPlot(mystery, distribution = "unif",
+       param.list = list(min = 0, max = 1),
+       add.line = FALSE, main = "QQ-Plot: Uniform(0,1)")
+abline(a = a_hat_unif, b = b_hat_unif, col = "red", lwd = 2)  # Add fitted line
+
+# 2. QQ-Plot: Sample vs Extreme Value(0,1)
+qqPlot(mystery, distribution = "evd",
+       param.list = list(location = 0, scale = 1),
+       add.line = FALSE, main = "QQ-Plot: Extreme Value(0,1)")
+abline(a = a_hat_evd, b = b_hat_evd, col = "red", lwd = 2)  # Add fitted line
+
+# 3. QQ-Plot: Sample vs Logistic(0,1)
+qqPlot(mystery, distribution = "logis",
+       param.list = list(location = 0, scale = 1),
+       add.line = FALSE, main = "QQ-Plot: Logistic(0,1)")
+abline(a = a_hat_logis, b = b_hat_logis, col = "red", lwd = 2)  # Add fitted line
+```
+As can be seen from the qq-plots, the logistic distribution fits the data the best.
+Estimated for Uniform(0,1): a = -1.734457 , b = 14.00126 
+Estimated for Extreme Value(0,1): a = 3.447191 , b = 3.151391 
+Estimated for Logistic(0,1): a = 5.266175 , b = 2.22837 
 
 # Exercise 2
 ## a.
