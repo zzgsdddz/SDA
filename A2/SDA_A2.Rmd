@@ -117,7 +117,7 @@ qqPlot(mystery, distribution = "logis",
        add.line = FALSE, main = "QQ-Plot: Logistic(0,1)")
 abline(a = a_hat_logis, b = b_hat_logis, col = "red", lwd = 2)  # Add fitted line
 ```
-As can be seen from the qq-plots, the logistic distribution fits the data the best.
+As can be seen from the qq-plots, the logistic distribution fits the data the best because the qq-plot almost looks like a straight line. the other two qq-plots are more curvy and have tails.
 Estimated for Uniform(0,1): a = -1.734457 , b = 14.00126 
 Estimated for Extreme Value(0,1): a = 3.447191 , b = 3.151391 
 Estimated for Logistic(0,1): a = 5.266175 , b = 2.22837 
