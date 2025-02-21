@@ -1,0 +1,26 @@
+---
+title: "SDA Group Submission Assignment Assign1"
+subtitle: "Group Gr18" 
+author: "MengliFeng (2720589) and PepijnVanOostveen (2801582)"
+output: 
+  pdf_document:
+    keep_tex: true
+header-includes:
+  - \usepackage{fvextra}
+  - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+---
+
+# Exercise 1
+## a.
+
+## b.
+
+## c.
+
+# Exercise 2
+## a.
+
+## b.
+
+## c.
+

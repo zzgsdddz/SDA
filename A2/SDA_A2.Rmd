@@ -1,0 +1,71 @@
+---
+title: "SDA Group Submission Assignment Assign1"
+subtitle: "Group Gr18" 
+author: "MengliFeng (2720589) and PepijnVanOostveen (2801582)"
+output: 
+  pdf_document:
+    keep_tex: true
+header-includes:
+  - \usepackage{fvextra}
+  - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+---
+
+# Exercise 1
+## a.
+```{r}
+# Set up a 2×3 grid for plotting (fills row-wise)
+par(mfrow = c(2, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
+
+# Define probability points
+p <- seq(0.01, 0.99, length.out = 100)
+
+# ---- First Row: QQ-Plots ----
+# 1. QQ-Plot: t(3) vs Normal(0,2)
+q_t3 <- qt(p, df = 3)
+q_norm <- qnorm(p, mean = 0, sd = sqrt(2))
+plot(q_t3, q_norm, type = "l", xlab = "t(3)", ylab = "N(0,2)", main = "t(3) vs N(0,2)")
+
+# 2. QQ-Plot: Chi-squared(25) vs Chi-squared(4)
+q_chisq25 <- qchisq(p, df = 25)
+q_chisq4 <- qchisq(p, df = 4)
+plot(q_chisq25, q_chisq4, type = "l", xlab = "Chi²(25)", ylab = "Chi²(4)", main = "Chi²(25) vs Chi²(4)")
+
+# 3. QQ-Plot: Gamma(7, 3/4) vs Exponential(3/4)
+q_gamma <- qgamma(p, shape = 7, rate = 3/4)
+q_exp <- qexp(p, rate = 3/4)
+plot(q_gamma, q_exp, type = "l", xlab = "Gamma(7,3/4)", ylab = "Exp(3/4)", main = "Gamma(7,3/4) vs Exp(3/4)")
+
+# ---- Second Row: Density Comparison ----
+# 4. Density Comparison: t(3) vs N(0,2)
+x_vals <- seq(min(q_t3, q_norm), max(q_t3, q_norm), length.out = 200)
+plot(x_vals, dt(x_vals, df = 3), type = "l", col = "blue", lwd = 2, xlab = "x", ylab = "Density", main = "")
+lines(x_vals, dnorm(x_vals, mean = 0, sd = sqrt(2)), col = "green", lwd = 2)
+legend("topright", legend = c("t(3)", "N(0,2)"), col = c("blue", "green"), lty = 1, lwd = 2, bty = "n")
+
+# 5. Density Comparison: Chi²(25) vs Chi²(4)
+x_vals <- seq(min(q_chisq25, q_chisq4), max(q_chisq25, q_chisq4), length.out = 200)
+plot(x_vals, dchisq(x_vals, df = 25), type = "l", col = "blue", lwd = 2, xlab = "x", ylab = "Density", main = "")
+lines(x_vals, dchisq(x_vals, df = 4), col = "green", lwd = 2)
+legend("topright", legend = c("Chi²(25)", "Chi²(4)"), col = c("blue", "green"), lty = 1, lwd = 2, bty = "n")
+
+# 6. Density Comparison: Gamma(7,3/4) vs Exp(3/4)
+x_vals <- seq(min(q_gamma, q_exp), max(q_gamma, q_exp), length.out = 200)
+plot(x_vals, dgamma(x_vals, shape = 7, rate = 3/4), type = "l", col = "blue", lwd = 2, xlab = "x", ylab = "Density", main = "")
+lines(x_vals, dexp(x_vals, rate = 3/4), col = "green", lwd = 2)
+legend("topright", legend = c("Gamma(7,3/4)", "Exp(3/4)"), col = c("blue", "green"), lty = 1, lwd = 2, bty = "n")
+
+# --- Add an Overall Title ---
+mtext("QQ-Plots (top) and Density Comparisons (bottom) of Distributions", outer = TRUE, cex = 1.5, font = 1)
+```
+
+## b.
+
+## c.
+
+# Exercise 2
+## a.
+
+## b.
+
+## c.
+
