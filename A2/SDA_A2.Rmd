@@ -1,13 +1,15 @@
 ---
 title: "SDA Group Submission Assignment Assign1"
-subtitle: "Group Gr18" 
 author: "MengliFeng (2720589) and PepijnVanOostveen (2801582)"
-output: 
+subtitle: Group Gr18
+output:
+  html_document:
+    df_print: paged
   pdf_document:
     keep_tex: true
 header-includes:
-  - \usepackage{fvextra}
-  - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+- \usepackage{fvextra}
+- \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
 ---
 
 # Exercise 1
@@ -124,8 +126,69 @@ Estimated for Logistic(0,1): a = 5.266175 , b = 2.22837
 
 # Exercise 2
 ## a.
+```{r}
+# load dataset
+parakeets <- readRDS("parakeets.RDS")
+
+# select the list of weights where the year is 1980 and 2015 respectively
+parakeet_weights_1980 <- parakeets$Weight[parakeets$Year == 1980]
+parakeet_weights_2015 <- parakeets$Weight[parakeets$Year == 2015]
+
+# set the grid to 1x2 for plotting the histograms
+par(mfrow = c(1, 2))
+    
+# plotting for 1980
+hist(parakeet_weights_1980, xlim = c(100, 140), main = "Weight Distribution (1980)", 
+     xlab = "Weight (g)")
+
+# plotting for 2015
+hist(parakeet_weights_2015, xlim = c(100, 140), main = "Weight Distribution (2015)", 
+     xlab = "Weight (g)")
+
+```
+The underlying distributions could be the same since the peak is at around the same weight, but this is hard to say since 1980 only has 20 samples.
+
 
 ## b.
+```{r}
+qqplot(parakeet_weights_1980, parakeet_weights_2015, 
+       main = "QQ-Plot: 1980 vs 2015 Parakeet Weights",
+       xlab = "1980 Weights", 
+       ylab = "2015 Weights")
 
+# Add a reference line
+abline(0, 1, col = "red", lwd = 2)
+```
+The points approximately follow the reference line so the distributions have the same shape. Thus they could be the same location-scale family (looking at the 2015 weight histogram they are probably both normal distributions).
 ## c.
+```{r}
+# set the grid to 1x2 for plotting the QQ-plots
+par(mfrow = c(1,2))
+
+# QQ-Plot for 1980 Weights
+qqnorm(parakeet_weights_1980, main = "QQ-Plot: Normal (1980)")
+# Add a reference line
+qqline(parakeet_weights_1980, col = "red", lwd = 2)
+
+# QQ-Plot for 2015 Weights
+qqnorm(parakeet_weights_2015, main = "QQ-Plot: Normal (2015)")
+# Add a reference line
+qqline(parakeet_weights_2015, col = "red", lwd = 2)
+```
+The weights from the 2015 sample seem to very clearly follow a normal distribution. The weights from the 1980 sample seem the deviate a little more from the fitted line, but they still follow it so it probably still originates from a normal distribution. The 1980 sample needs more weights to get more confidence in this conclusion.
+
+## d.
+```{r}
+shapiro_1980 <- shapiro.test(parakeet_weights_1980)
+shapiro_2015 <- shapiro.test(parakeet_weights_2015)
+
+print(shapiro_1980)
+print(shapiro_2015)
+```
+The Null hypothesis isn't rejected for the 1980 sample since the p-value is more than 0.05 (corresponding to the significance level of 5%) which doesn't mean that it is normally distributed but it says that we don't have significant proof that it isn't  normally distributed.
+The Null hypothesis for the the 2015 sample is rejected since the p-value of 0.0496 is lower than 0.05. This means we have significant proof that the 2015 sample isn't normally distributed.
+
+## e.
+In the graphs for the 1980 sample we couldn't say for sure that it followed a normal distribution, but it looked like it did and the Shapiro-Wilk normality test said that it is either normal or we don't have enough data to be confident that it isn't normal. Thus the conclusion is that the 1980 sample is probably follows a normal distribution but it is inconclusive because of the small sample size.
+The graphs for the 2015 sample show that it follows a normal distribution. The Shapiro-Wilk normality test says that the sample isn't normal, but this test is more sensitive to small deviations from a normal distribution as the sample size increases and from the graphs you can see that this probably happens due to the tails that deviate from a normal distribution. Thus the 2015 sample doesn't follow a normal distribution exactly, but the distribution that it follows can be approximated really well by a normal distribution, especially in the area exclusing the tails.
 
