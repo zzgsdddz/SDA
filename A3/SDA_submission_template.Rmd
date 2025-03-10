@@ -83,8 +83,58 @@ cat("Default R Bandwidth:", default_bw, "\n")
 
 # Exercise 2
 ## a.
+I expect that $f(t)=0$ only for $t<0$. As $f$ is only $0$ when there is no chance that you wait for that amount of time and you can't wait for a negative amount of time. For any other amount of time there is a non-zero chance as you can wait anywhere from 0 minutes (someone else called the elevator at the right time that you can enter the elevator with them) and a practically infinite amount of time (the elevator is out of order).
 
 ## b.
+```{r}
+# load the dataset
+wait_times <- readRDS("waiting_times.RDS")
+
+# log-transform as suggested by the hint
+log_times = log(wait_times)
+
+# estimating the density of the transformed sample
+y_seq <- seq(min(log_times), max(log_times), length.out = 512)
+density_y <- density(log_times, from = min(y_seq), to = max(y_seq))
+
+# Transform back to the original scale
+x_seq <- exp(y_seq)
+density_x <- density_y$y / exp(y_seq)
+
+# plot histogram
+hist(wait_times, probability = TRUE, breaks = 30, main = "Kernel Density Estimation", xlab = "Waiting Time (minutes)")
+
+# Add KDE line
+lines(x_seq, density_x, col = "red",lwd = 2)
+
+```
 
 ## c.
+```{r}
+library(EnvStats)
+
+# QQ-Plot for Exponential distribution
+qqPlot(wait_times, distribution = "exp", estimate.params = TRUE, add.line = TRUE, line.col = "red", main = "QQ-Plot: Sample vs. Exponential")
+```
+The points seem to follow the line pretty well so I think that an exponential distribution is an appropriate choice to model the sample.
+
+## d.
+```{r}
+# We know that the rate MLE for the rate lambda is 1 divided by the sample mean (the waiting times)
+l_mle <- 1 / mean(wait_times)
+
+x_seq <- seq(min(wait_times), max(wait_times), length.out = 512)
+
+# Now we make make the theoretical density function using our estimate
+exp_density <- l_mle * exp(-l_mle * x_seq)
+
+# Plot the histogram again
+hist(wait_times, probability = TRUE, breaks = 30, main = "Hist with Exponential MLE Density", xlab = "Waiting Time (minutes)")
+
+# Add a line for our theoretical density function
+lines(x_seq, exp_density, col = "red", lwd = 2)
+legend("topright", legend = c("Exponential MLE Density"), col = "red", lwd = 2)
+```
+The exponential density is worse than the estimator found b since the sample doesn't exactly follow an exponential distribution. Instead the sample follows an exponential distribution, but with with an added peak close to zero because relatively often you don't have to wait for the elevator at all because someone else has already called it.
+
 
