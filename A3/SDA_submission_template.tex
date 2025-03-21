@@ -184,7 +184,9 @@ Choice: The bandwidth has a much larger influence than the kernel. A
 smaller bandwidth (0.3) captures more fluctuations in the data, while a
 larger bandwidth (1.5) smooths out more features. • Key Influence:
 Bandwidth choice has a bigger impact on the estimator compared to kernel
-choice. \#\# c.
+choice.
+
+\subsection{c.}\label{c.}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -223,8 +225,98 @@ choice. \#\# c.
 
 \subsection{a.}\label{a.-1}
 
+I expect that \(f(t)=0\) only for \(t<0\). As \(f\) is only \(0\) when
+there is no chance that you wait for that amount of time and you can't
+wait for a negative amount of time. For any other amount of time there
+is a non-zero chance as you can wait anywhere from 0 minutes (someone
+else called the elevator at the right time that you can enter the
+elevator with them) and a practically infinite amount of time (the
+elevator is out of order).
+
 \subsection{b.}\label{b.-1}
 
-\subsection{c.}\label{c.}
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# load the dataset}
+\NormalTok{wait\_times }\OtherTok{\textless{}{-}} \FunctionTok{readRDS}\NormalTok{(}\StringTok{"waiting\_times.RDS"}\NormalTok{)}
+
+\CommentTok{\# log{-}transform as suggested by the hint}
+\NormalTok{log\_times }\OtherTok{=} \FunctionTok{log}\NormalTok{(wait\_times)}
+
+\CommentTok{\# estimating the density of the transformed sample}
+\NormalTok{y\_seq }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(log\_times), }\FunctionTok{max}\NormalTok{(log\_times), }\AttributeTok{length.out =} \DecValTok{512}\NormalTok{)}
+\NormalTok{density\_y }\OtherTok{\textless{}{-}} \FunctionTok{density}\NormalTok{(log\_times, }\AttributeTok{from =} \FunctionTok{min}\NormalTok{(y\_seq), }\AttributeTok{to =} \FunctionTok{max}\NormalTok{(y\_seq))}
+
+\CommentTok{\# Transform back to the original scale}
+\NormalTok{x\_seq }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(y\_seq)}
+\NormalTok{density\_x }\OtherTok{\textless{}{-}}\NormalTok{ density\_y}\SpecialCharTok{$}\NormalTok{y }\SpecialCharTok{/} \FunctionTok{exp}\NormalTok{(y\_seq)}
+
+\CommentTok{\# plot histogram}
+\FunctionTok{hist}\NormalTok{(wait\_times, }\AttributeTok{probability =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{breaks =} \DecValTok{30}\NormalTok{, }\AttributeTok{main =} \StringTok{"Kernel Density Estimation"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"Waiting Time (minutes)"}\NormalTok{)}
+
+\CommentTok{\# Add KDE line}
+\FunctionTok{lines}\NormalTok{(x\_seq, density\_x, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{,}\AttributeTok{lwd =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{SDA_submission_template_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\subsection{c.}\label{c.-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(EnvStats)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'EnvStats'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     predict, predict.lm
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# QQ{-}Plot for Exponential distribution}
+\FunctionTok{qqPlot}\NormalTok{(wait\_times, }\AttributeTok{distribution =} \StringTok{"exp"}\NormalTok{, }\AttributeTok{estimate.params =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{add.line =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{line.col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{main =} \StringTok{"QQ{-}Plot: Sample vs. Exponential"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{SDA_submission_template_files/figure-latex/unnamed-chunk-4-1.pdf}
+The points seem to follow the line pretty well so I think that an
+exponential distribution is an appropriate choice to model the sample.
+
+\subsection{d.}\label{d.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# We know that the rate MLE for the rate lambda is 1 divided by the sample mean (the waiting times)}
+\NormalTok{l\_mle }\OtherTok{\textless{}{-}} \DecValTok{1} \SpecialCharTok{/} \FunctionTok{mean}\NormalTok{(wait\_times)}
+
+\NormalTok{x\_seq }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(wait\_times), }\FunctionTok{max}\NormalTok{(wait\_times), }\AttributeTok{length.out =} \DecValTok{512}\NormalTok{)}
+
+\CommentTok{\# Now we make make the theoretical density function using our estimate}
+\NormalTok{exp\_density }\OtherTok{\textless{}{-}}\NormalTok{ l\_mle }\SpecialCharTok{*} \FunctionTok{exp}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{l\_mle }\SpecialCharTok{*}\NormalTok{ x\_seq)}
+
+\CommentTok{\# Plot the histogram again}
+\FunctionTok{hist}\NormalTok{(wait\_times, }\AttributeTok{probability =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{breaks =} \DecValTok{30}\NormalTok{, }\AttributeTok{main =} \StringTok{"Hist with Exponential MLE Density"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"Waiting Time (minutes)"}\NormalTok{)}
+
+\CommentTok{\# Add a line for our theoretical density function}
+\FunctionTok{lines}\NormalTok{(x\_seq, exp\_density, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{lwd =} \DecValTok{2}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"topright"}\NormalTok{, }\AttributeTok{legend =} \FunctionTok{c}\NormalTok{(}\StringTok{"Exponential MLE Density"}\NormalTok{), }\AttributeTok{col =} \StringTok{"red"}\NormalTok{, }\AttributeTok{lwd =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{SDA_submission_template_files/figure-latex/unnamed-chunk-5-1.pdf}
+The exponential density is worse than the estimator found b since the
+sample doesn't exactly follow an exponential distribution. Instead the
+sample follows an exponential distribution, but with with an added peak
+close to zero because relatively often you don't have to wait for the
+elevator at all because someone else has already called it.
 
 \end{document}
