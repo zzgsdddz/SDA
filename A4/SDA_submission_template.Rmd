@@ -137,8 +137,64 @@ print(comparison)
 
 # Exercise 2
 ## a.
+It is given that $$\tilde{D_n}=max_i max\left(\left| \frac{i-1}{n} - \Phi\left( \frac{X_{(i)}-\bar{X}}{S} \right)\right|, \left| \frac{i}{n} - \Phi\left(\frac{X_{(i)}-\bar{X}}{S}\right) \right|\right)$$ 
+
+This depends on $F$ by using $\frac{X_{(i)}-\bar{X}}{S}$ and the null hypothesis states that $X_{(i)}\sim N(\bar{X},S)$. Thus $X_{(i)}-\bar{X}\sim N(0,S)$ and finally we define $Z_{(i)}=\frac{X_{(i)}-\bar{X}}{S}\sim N(0,1)$. Substituting this in our original equation we get:
+$$\tilde{D_n}=max_i max\left(\left| \frac{i-1}{n} - \Phi\left(Z_{(i)} \right)\right|, \left| \frac{i}{n} - \Phi\left(Z_{(i)}\right) \right|\right)$$ 
+Which shows that under the null, $\tilde{D}_n$ is independent of the location and scale parameters since $Z_{(i)}$ is independent of them.
 
 ## b.
+```{r}
+# Load the data
+data(morley)
+head(morley)
+l_speed <- morley$Speed
+
+# Calculate the mean and standard dev
+m_speed <- mean(l_speed)
+sd_speed <- sd(l_speed)
+
+# run ks.test
+ks_result <- ks.test(l_speed, "pnorm", mean = m_speed, sd = sd_speed)
+
+# Extract D_n and the p-value
+D_n <- ks_result$statistic
+p_value <- ks_result$p.value
+print(D_n)
+print(p_value)
+```
+The p-value (0.4895616) is more than the significance level of 0.05 and thus we don't reject the null hypothesis that the data follows a normal distribution.
+The p-value isn't reliable since the Kolmogorov-Smirnov assumes that we now the parameters of the distribution, but we had to estimate them using the sample mean and standard deviation.
+(R also gives the warning "Warning: ties should not be present for the one-sample Kolmogorov-Smirnov test" which means that some values in the data repeat which and that shouldn't happen since the test is made for a continuous distribution.)
+
 
 ## c.
+```{r}
+set.seed(1234)
 
+n <- length(l_speed)
+B <- 1000
+Dn_star <- numeric(B)
+
+for (i in 1:B) {
+  # Generate bootstrap sample from N(m_speed, sd_speed^2)
+  bootstrap_sample <- rnorm(n, mean = m_speed, sd = sd_speed)
+
+  # Calculate the mean and standard dev
+  m_star <- mean(bootstrap_sample)
+  sd_star <- sd(bootstrap_sample)
+  
+  # run ks.test
+  ks_star <- ks.test(bootstrap_sample, "pnorm", mean = m_star, sd = sd_star)
+  Dn_star[i] <- ks_star$statistic
+}
+
+# compute p-value using the bootstrap distribution
+p_value_bootstrap <- mean(Dn_star >= D_n)
+
+print(p_value_bootstrap)
+```
+
+## d.
+There is a big difference between the p-values in b and c. b results in a p-value of 0.4895616 and the bootstrap method in c results in a p-value of 0.078. This difference of 0.411 is very big, but still not large enough to result in different test decisions as the result from c is still above the significance level of 0.05.
+The final conclusion is that both tests result in not rejecting the null hypothesis and thus not having enough evidence that the data doesn't follow a normal distribution.
