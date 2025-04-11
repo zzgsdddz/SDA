@@ -1,0 +1,98 @@
+---
+title: "SDA Group Submission Assignment Assign5"
+subtitle: "Group Gr18" 
+author: "MengliFeng (2720589) and PepijnVanOostveen (2801582)"
+output: 
+  pdf_document:
+    keep_tex: true
+header-includes:
+  - \usepackage{fvextra}
+  - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+---
+
+# Exercise 1
+```{r}
+# Load the data
+grades <- readRDS("grades.RDS")
+on_time <- grades$on_time
+late <- grades$late
+```
+
+## a.
+```{r}
+# Shapiro-Wilk Test for normality
+shapiro_on_time <- shapiro.test(on_time)
+shapiro_late <- shapiro.test(late)
+
+# Print results
+cat("Shapiro-Wilk Test for on_time:\n")
+print(shapiro_on_time)
+
+cat("\nShapiro-Wilk Test for late:\n")
+print(shapiro_late)
+```
+for the on-time sample, the null hypothesis is rejected 
+for the late sample, the null hypothesis is rejected
+Since the null hypothesis for Shapiro-Wilk test is that the data is normally distributed and it is rejected for both of the samples, we know that t-test (requires normal distribution of the samples) is not an approriate location test for the data
+
+## b.
+```{r}
+
+# Remove values equal to 7, as they don't contribute to the sign test
+filtered_on_time <- on_time[on_time != 7]
+
+# Count how many are greater than 7
+n <- length(filtered_on_time)
+num_positive <- sum(filtered_on_time > 7)
+
+# Exact binomial test (sign test)
+sign_test <- binom.test(num_positive, n, p = 0.5, alternative = "greater")
+cat("\nSign Test Result (on_time > 7):\n")
+print(sign_test)
+
+# Normal approximation
+# Mean and standard deviation under H0
+mu <- n * 0.5
+sigma <- sqrt(n * 0.5 * 0.5)
+
+# Normal approximation (continuity correction)
+z <- (num_positive - mu ) / sigma
+p_norm <- 1 - pnorm(z)
+cat("\nNormal approximation p-value:\n")
+print(p_norm)
+```
+the null hypothesis under the sign test is rejected
+the p-value for the normal approximation is slightly larger than that under sign test, with magnitude of e-9. the null hypothesis for the normal approximation is also rejected.
+
+## c.
+```{r}
+# Remove values equal to 7
+filtered_late <- late[late != 7]
+
+# Count how many are greater than 7
+n_late <- length(filtered_late)
+num_positive_late <- sum(filtered_late > 7)
+
+# Exact binomial test (sign test)
+sign_test_late <- binom.test(num_positive_late, n_late, p = 0.5, alternative = "greater")
+cat("\nSign Test Result (late > 7):\n")
+print(sign_test_late)
+
+# Normal approximation
+mu_late <- n_late * 0.5
+sigma_late <- sqrt(n_late * 0.5 * 0.5)
+z_late <- (num_positive_late - mu_late) / sigma_late
+p_norm_late <- 1 - pnorm(z_late)
+cat("\nNormal approximation p-value (late):\n")
+print(p_norm_late)
+```
+the normal approximation also lead to rejection of null hypothesis as the sign test does, but the p-value is off for around 0.0179. The reason is that binomial can be approximated by normal distribution with large sample size. As $n = 25$ (small sample size) and $p = 0.5$, $n \cdot p \cdot(1-p) < 10 $, the p-valule from normal distribution is less accurate.
+
+
+# Exercise 2
+## a.
+
+## b.
+
+## c.
+

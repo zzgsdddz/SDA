@@ -43,11 +43,9 @@ qqline(Davis_F$height)
 shapiro.test(Davis_M$height)
 shapiro.test(Davis_F$height)
 ```
-from both the histograms and the qq-plots, we can see the distributions of heights of both male and female are both close to normal distribution. From the histograms, we can observe a subtlety that heights of males have more mass below the mean and vice versa for weights of females.
+from both the histograms and the qq-plots, we can see the distributions of heights of both male and female are both close to normal distribution. There are some wiggles observed in qq-plots, but they are likely from rounding effect, not necessarily linked to unnormality. From the histograms, we can observe a subtlety that heights of males have more mass below the mean and vice versa for weights of females.
 
 From Shapiro-Wilk test results, the null hypothesis is not rejected.
-
-? what's about the rounded heights
 
 ## b.
 ```{r}
