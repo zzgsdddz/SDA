@@ -91,8 +91,65 @@ the normal approximation also lead to rejection of null hypothesis as the sign t
 
 # Exercise 2
 ## a.
+```{r}
+# load the samples and split it into the first 20 observations and the rest.
+samples <- readRDS("newcomb.RDS")
+sample1 <- samples[1:20]
+sample2 <- samples[21:66]
+
+# set up plot layout. Two columns for the 2 sets of data and 3 rows for the 3 different plots
+par(mfrow = c(1, 3))
+
+# histogram
+breaks <- pretty(range(samples), n = 20)
+
+hist(sample2, freq = FALSE, breaks=breaks, col = rgb(0, 1, 0, 1/4), xlim = range(samples),
+     main = "Overlayed Histograms", xlab = "Value")
+hist(sample1, freq = FALSE, breaks=breaks, col = rgb(0, 0, 1, 1/4),xlim = range(samples), add = TRUE)
+legend("topleft", legend = c("Sample 1", "Sample 2"),
+       fill = c(rgb(0, 0, 1, 1/4), rgb(0, 1, 0, 1/4)))
+
+
+# Boxplot
+boxplot(sample1, sample2, names = c("Sample 1", "Sample 2"), col = c(rgb(0, 0, 1, 1/4), rgb(0, 1, 0,  1/4)),
+        main = "Boxplots of both samples", ylab = "Value")
+
+
+# empirical CDF
+plot(ecdf(sample1), verticals = TRUE, do.points = FALSE, col = rgb(0, 0, 1, 1/2),
+     main = "ECDFs of Sample 1 and 2", xlab = "Value", ylab = "ECDF")
+lines(ecdf(sample2), verticals = TRUE, do.points = FALSE, col = rgb(0, 1, 0, 1/2))
+legend("topleft", legend = c("Sample 1", "Sample 2"), col = c(rgb(0, 0, 1,  1/2), rgb(0, 1, 0,  1/2)), lty = 1)
+
+
+```
+Sample 2 looks like it could be the result of a normal distribution and the first 20 observations (sample 1) would also look like it comes from a normal distribution, but only if the 2 outliers were removed. These two outliers from sample 1 are the only outliers and make sample 1 asymmetric, while sample 2 isn't completely symmetric but is close to it.
+(I used rgb values as colors since I needed transparent colors for the histogram and wanted to use the same colors in the other graphs. I reduced the transparency in the ECDF for better visibility.)
+
+```{r}
+sample1_trimmed <- sort(sample1)[-c(1, 2)]
+hist(sample1_trimmed, freq = FALSE, col = rgb(0, 0, 1, 1/2),
+     main = "Histogram of Sample 1 (2 lowest values removed)", xlab = "Value")
+```
+This histogram shows that the first 20 observations do indeed resemble a normal distribution if the outliers are removed.
 
 ## b.
+The Wilcoxon two-sample test assumes that the distributions are the same shape and looks at the location of these shapes. This is probably a bad test for our sampels due to the outliers and we don't know if both samples come from a normal distribution.'
+So the Kolmogorov-Smirnov two-sample test is probably the best test since it tests if the samples come from the same distribution shape.
 
 ## c.
+```{r}
+ks_result <- ks.test(sample1, sample2)
+ks_result
+```
+
+The p-value is higher than our significance level of 0.05 and thus we don't reject our hypothesis that the two distributions come from the same distribution. With how low the p-value is I would say that we don't know if the two samples come from the same distribution without context.
+
+With context I would say that a reasonable explanation for the difference is that the error of experiment is normally distributed and that the Newcomb became better at the experiment as he went along so the only 2 outliers happened in the first 20 observations. Let us remove this two possible mistakes and do the test again.
+
+```{r}
+ks_result <- ks.test(sample1_trimmed, sample2)
+ks_result
+```
+The p-value is 0.4917 and my conclusion is that we still can't be very confident one way or another.
 
