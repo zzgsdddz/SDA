@@ -86,7 +86,7 @@ p_norm_late <- 1 - pnorm(z_late)
 cat("\nNormal approximation p-value (late):\n")
 print(p_norm_late)
 ```
-the normal approximation also lead to rejection of null hypothesis as the sign test does, but the p-value is off for around 0.0179. The reason is that binomial can be approximated by normal distribution with large sample size. As $n = 25$ (small sample size) and $p = 0.5$, $n \cdot p \cdot(1-p) < 10 $, the p-valule from normal distribution is less accurate.
+the normal approximation also lead to rejection of null hypothesis as the sign test does, but the p-value is off for around 0.0179. The reason is that binomial can be approximated by normal distribution with large sample size. As $n = 25$ (small sample size) and $p = 0.5$, $n \cdot p \cdot(1-p) < 10$, the p-valule from normal distribution is less accurate.
 
 
 # Exercise 2

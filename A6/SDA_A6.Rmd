@@ -1,0 +1,60 @@
+---
+title: "SDA Group Submission Assignment Assign1"
+subtitle: "Group Gr18" 
+author: "MengliFeng (2720589) and PepijnVanOostveen (2801582)"
+output: 
+  pdf_document:
+    keep_tex: true
+header-includes:
+  - \usepackage{fvextra}
+  - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+---
+
+# Exercise 1
+## a.
+```{r}
+# Step 1: Create the contingency matrix
+email_matrix <- matrix(c(9, 11, 4, 21), nrow = 2, byrow = FALSE,
+                       dimnames = list(Spam_Status = c("Spam", "Not_Spam"),
+                                       Urgency = c("Urgent", "Not_Urgent")))
+
+# Step 2: Mosaic plot with custom colors
+mosaicplot(email_matrix, color = c("tomato", "lightblue"), 
+           main = "Mosaic Plot of Email Spam by Urgency",
+           xlab = "Urgency", ylab = "Spam Status", 
+           sort = 1:2, dir = c("h", "v"))
+```
+
+
+## b.
+P(Spam|Urgent) = 9/(9+4) = 0.692
+this is computed by diving the number of spam labeled urgent and the total emails that are labeled as urgent.
+
+## c.
+```{r}
+# Extract values
+a <- email_matrix["Spam", "Urgent"]
+b <- email_matrix["Not_Spam", "Urgent"]
+c <- email_matrix["Spam", "Not_Urgent"]
+d <- email_matrix["Not_Spam", "Not_Urgent"]
+
+# Compute conditional probabilities
+odds_ratio <- (a / b) / (c / d)
+odds_ratio
+```
+## d.
+```{r}
+# Perform one-sided Fisher's exact test
+fisher_result <- fisher.test(email_matrix, alternative = "greater")
+fisher_result
+```
+since we want to know if urgent means more likely spam (not just related), we use one-sided test, with alternative odds is greater than 1 (urgent emails have higher odds being spam).
+the null is rejected
+
+# Exercise 2
+## a.
+
+## b.
+
+## c.
+
