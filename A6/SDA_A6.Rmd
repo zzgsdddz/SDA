@@ -53,8 +53,42 @@ the null is rejected
 
 # Exercise 2
 ## a.
+```{r}
+# Create the table and then use it to make a mosaicplot
+titanic_CS <- margin.table(Titanic, margin = c(1, 4))
+mosaicplot(titanic_CS, main = "Titanic Survival by Class", color = c("red", "darkgreen"))
+
+```
+There is an obvious correlation between the class and chance of survival. So the wealthier you were (or more accurately the more you spent on your ticket) the likelier you were to survive with the crew being the least likely to survive.
+
 
 ## b.
+```{r}
+# Do the test
+chisq.test(titanic_CS)
+
+```
+The p-value is less than 10^-15 it is far smaller than the significance level of 0.05 and thus the null is rejected as we expected. This means that the test had the same result as we had by just looking at the mosaic namely that there is a relationship between the class and the chance to survive.
 
 ## c.
+```{r}
+# Get the expected values
+test_result <- chisq.test(titanic_CS)
+test_result$expected
 
+# The real values
+titanic_CS
+```
+The values that are the farthest apart from the expected values is the survival chance of 1st class, but I expected that so the thing that I found most striking is that there is almost no difference between 3rd class and the crew. I thought that knowing more about the ship would help the crew and that 3rd class had the lowest chances since 1st and 2nd class were situated better.
+
+## d.
+```{r}
+# get the 3rd and crew rows from our table
+third_crew <- titanic_CS[c("3rd", "Crew"), ]
+
+# make it a matrix and then test as alternative greater since the first row is 3rd class and we want to know if first class has a better survival chance
+survival_table <- as.matrix(third_crew)
+fisher.test(survival_table, alternative = "greater")
+
+```
+The p-value is 0.7385 so the survival chance isn't significantly higher for 3rd class and thus the hypothesis that the chacnes are equal isn't rejected.
