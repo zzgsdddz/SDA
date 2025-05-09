@@ -1,0 +1,125 @@
+---
+title: "SDA Group Submission Assignment Assign7"
+subtitle: "Group Gr18" 
+author: "MengliFeng (2720589) and PepijnVanOostveen (2801582)"
+output: 
+  pdf_document:
+    keep_tex: true
+header-includes:
+  - \usepackage{fvextra}
+  - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+---
+
+# Exercise 1
+```{r}
+# Load required package
+library(openintro)
+
+# View dataset structure
+str(mammals)
+mammals[c(1,5),]$species
+```
+
+## a.
+```{r}
+# Fit the linear model
+model_full <- lm(brain_wt ~ body_wt + gestation, data = mammals)
+
+# Model summary
+summary(model_full)
+
+# Default diagnostic plots (2 x 2 grid)
+par(mfrow = c(2, 2), mar = c(4, 4, 2, 2))
+plot(model_full)
+```
+
+	
+	
+## b.
+In a well-fitting linear regression model:
+	•	Residuals should be randomly scattered around the horizontal line at 0,
+	•	There should be no visible patterns,
+	•	The spread (variance) of residuals should be roughly constant across fitted values.
+
+In the first plot:
+	•	The residuals deviate sharply from 0 at higher fitted values,
+	•	There is a curved or fan-shaped pattern — suggesting non-linearity,
+	•	Points 1, 5, and 34 are far away from the bulk of other residuals, affecting the pattern.
+Therefore, the linearity assumption is not satisfied
+
+In Q-Q Plot:
+	•	The points deviate notably from the theoretical line, especially at the extremes (left and right tails).
+This indicates that the residuals are not normally distributed, violating the normality assumption.
+
+In Scale-Location Plot:
+	•	The spread (variance) of the standardized residuals increases dramatically for larger fitted values.
+	•	The line is not flat, and there’s a strong trend upward, indicating heteroscedasticity (non-constant variance).
+	
+In Residual vs leverage plot:
+point 1 and 5 have Cook’s distance larger than 1 and can thus be identified as influence points: they are Africanelephant Asianelephant 
+	
+## c.
+```{r}
+# Regression 1: brain_wt ~ body_wt
+model_body <- lm(brain_wt ~ body_wt, data = mammals)
+
+# Regression 2: brain_wt ~ gestation
+model_gest <- lm(brain_wt ~ gestation, data = mammals)
+
+# Plot both with regression lines
+par(mfrow = c(1, 2))
+
+plot(mammals$body_wt, mammals$brain_wt,
+     main = "brain_wt vs body_wt", xlab = "body_wt", ylab = "brain_wt")
+abline(model_body, col = "blue")
+
+plot(mammals$gestation, mammals$brain_wt,
+     main = "brain_wt vs gestation", xlab = "gestation", ylab = "brain_wt")
+abline(model_gest, col = "blue")
+```
+Left Plot: brain_wt vs body_wt
+	•	There is a strong positive relationship between body weight and brain weight.
+	•	However, the relationship appears to be nonlinear and heavily influenced by a few large outliers, particularly two points with very large body and brain weights.
+	•	Most of the data are clustered tightly near the origin, making it difficult to see detailed trends without a transformation.
+
+Right Plot: brain_wt vs gestation
+	•	There is also a positive trend between gestation time and brain weight, though the correlation is weaker than with body weight.
+	•	The spread of points is again highly skewed, with most values clustered near the bottom-left corner and a few large outliers pulling the regression line upward.
+	•	The linear fit line again does not capture the trend well for the majority of data, likely due to skewness and nonlinearity.
+	
+## d.
+```{r}
+# Log-log model
+model_log <- lm(log(brain_wt) ~ log(body_wt) + log(gestation), data = mammals)
+
+# Summary
+summary(model_log)
+
+# Diagnostic plots for log-log model
+par(mfrow = c(2, 2), mar = c(4, 4, 2, 2))
+plot(model_log)
+
+# Cook's distance for log-log model
+cooksD_log <- cooks.distance(model_log)
+which(cooksD_log > 1)
+```
+Linearity Assumption (Residuals vs Fitted Plot)
+	•	The residuals are now more randomly scattered around 0, with no obvious non-linear trend.
+	•	This suggests the linearity assumption is much better satisfied than in the untransformed model.
+Normality of Residuals (Q-Q Plot)
+	•	Points lie much closer to the diagonal line, especially in the center.
+	•	While a few outliers (e.g., obs. 34 and 500) remain in the tails, overall normality is significantly improved.
+Homoscedasticity (Scale-Location Plot)
+	•	The spread of standardized residuals is much more uniform across the range of fitted values.
+	•	The red trend line is relatively flat, indicating constant variance — a key assumption now better met.
+Influence Points (Residuals vs Leverage Plot)
+	•	Influential points are still present (e.g., 34, 61), but they do not exceed Cook’s distance threshold.
+	•	Leverage values are low overall, and no observation is as extreme as in the original model.
+
+# Exercise 2
+## a.
+
+## b.
+
+## c.
+
