@@ -118,8 +118,63 @@ Influence Points (Residuals vs Leverage Plot)
 
 # Exercise 2
 ## a.
+```{R}
+set.seed(123)
+x1 <- runif(100, min = 0, max = 10)
+x2 <- runif(100, min = 0, max = 5)
+y <- 7 + 0.8 * x1 + 0.4 * x2 + rnorm(100, mean = 0, sd = 1.5)
+```
+This code corresponds to the linear model:
+$$y=\beta_0 + \beta_1x_1 + \beta_2x_2 + \epsilon$$
+thus:
+$$\beta_0 = 7,\ \beta_1=0.8,\ \beta_2=0.4$$
+and $\epsilon$ is the error which is normally distributed ($\mathcal{N}(0,1.5^2)$).
 
+```{r}
+model <- lm(y ~ x1 + x2)
+summary(model)
+```
+The estimated values are close to the actual values. The estimates for $\beta_0,\  \beta_1$ and $\beta_2$ are $6.79$, $0.81$ and $0.39$ respectively.  
+Both $H_0:\beta_1=0$ and $H_0:\beta_2=0$ would be rejected at $\alpha = 5\%$ since the p-values are $<2\cdot10^{-16}$ and $0.000727$ respectively.
 ## b.
+```{R}
+set.seed(123)
+x1 <- runif(100, min = 0, max = 10)
+x2 <- 0.5 * x1 + rnorm(100, sd = 0.1)
+y <- 7 + 0.8 * x1 + 0.4 * x2 + rnorm(100, mean = 0, sd = 1.5)
+```
+We again have the same linear model:
+$$y=\beta_0 + \beta_1x_1 + \beta_2x_2 + \epsilon$$
+And thus the same values for the $\beta_i$ and error:
+$$\beta_0 = 7,\ \beta_1=0.8,\ \beta_2=0.4,\ \epsilon\sim\mathcal{N}(0,1.5^2)$$
+The only thing that $x_2$ is now correlated to $x_1$ since:
+$$x_2=0.5x_1 + error$$
+where $error\sim\mathcal{N}(0,0.1^2)$ is relatively small.
+
+```{r}
+model <- lm(y ~ x1 + x2)
+summary(model)
+```
+The estimates aren't close to the actual values anymore, except for the intercept which is even a little closer to the actual value than before. (The estimates for $\beta_0,\  \beta_1$ and $\beta_2$ are $7.10$, $1.42$ and $-0.88$ respectively.)
+Both $H_0:\beta_1=0$ and $H_0:\beta_2=0$ now fail to be rejected at $\alpha = 5\%$ although the first was still close to being rejected since the p-values are $0.0563$ and $0.5523$ respectively.
+
+In $(a)$ $x_1$ and $x_2$ were independent, but now there is a high correlation between the two. This causes multicollinearity which increases the variance of estimators. The correlation makes it difficult to find the individual effect of each predictor.
 
 ## c.
+We don't need to fit the regression explicitly since we can use the squared correlation:
+$$R_i^2=r_i^2$$
+where r is the correlation between the two variables.
 
+```{r}
+r1 <- cor(x1, x2)
+VIF1 <- 1 / (1 - r1^2)
+
+r2 <- cor(x2, x1)
+VIF2 <- 1 / (1 - r2^2)
+
+VIF1
+VIF2
+```
+High single digit $VIF$ already indicate high multicollinearity so $VIF_1=VIF_2 = 218.5474$ shows a very high multicollinearity between $x1$ and $x_2$ as we already concluded in $(b)$.
+
+$VIF_1=VIF_2$ since when we regress $x_1$ on $x_2$ or $x_2$ on $x_1$ with just 2 predictors $R^2_i$ is equal to the correlation coefficient $r$ squared and the correlation between two variables is symmetric.
